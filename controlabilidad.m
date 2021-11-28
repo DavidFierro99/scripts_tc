@@ -1,6 +1,7 @@
 %% controlabilidad.m
 % Dadas la matrices de estados A y B determina si es sistema es de estados
-% completamente controlables
+% completamente controlables. Estas matrices pueden ser de una o multiples
+% entradas.
 
 clc
 clear
@@ -9,9 +10,9 @@ clear
 % Añadir en esta seccion los valores de las matrices A, B y C (se asume que
 % D = 0)
 
-A = [2 -1; 0 -3];
+A = [2 0 0; 0 2 0; 0 3 1];
 
-B = [1; 0];
+B = [0 1; 1 0; 0 1];
 
 
 %% Inicio de script
@@ -23,7 +24,7 @@ if n ~= size(A, 2)
     return
 end
 
-if size(B, 1) ~= n || size(B, 2) ~= 1
+if size(B, 1) ~= n 
     disp('Tamanio incorrecto de matriz B');
     return
 end
@@ -57,19 +58,35 @@ clear i;
 fprintf('Co = \n\n');
 disp(Co);
     
-disp('******************************************************************')
-disp('Determinante de matriz de controlabilidad')
-fprintf('******************************************************************\n\n')
 
-disp(det(Co));
 
-if det(Co) == 0
+controlable = false;
+
+if size(B, 2) == 1 
+    
+    disp('******************************************************************')
+    disp('Determinante de matriz de controlabilidad')
+    fprintf('******************************************************************\n\n')
+
+    disp(det(Co));
+    
+else
+    disp('******************************************************************')
+    disp('Rango de matriz de controlabilidad')
+    fprintf('******************************************************************\n\n')
+    
+    disp(rank(Co));
+    
+end
+    
+if length(A) - rank(Co) == 0
+    disp('---------------------------------------------------------');
+    disp('El sistema es de estados completamente controlables');
+    disp('---------------------------------------------------------');
+else
     disp('Los vectores columna de la matriz de controlabilidad no son linealmente independientes');
     disp('---------------------------------------------------------');
     disp('El sistema NO es de estados completamente controlables');
     disp('---------------------------------------------------------');
-else
-    disp('---------------------------------------------------------');
-    disp('El sistema es de estados completamente controlables');
-    disp('---------------------------------------------------------');
+    
 end
