@@ -12,7 +12,7 @@ clear
 
 A = [2 0 0; 0 2 0; 0 3 1];
 
-B = [0 1; 1 0; 0 1];
+C = [1 0 0; 0 1 0];
 
 
 %% Inicio de script
@@ -24,7 +24,7 @@ if n ~= size(A, 2)
     return
 end
 
-if size(B, 1) ~= n 
+if size(C, 2) ~= n 
     disp('Tamanio incorrecto de matriz B');
     return
 end
@@ -37,52 +37,65 @@ fprintf('******************************************************************\n\n'
 
 fprintf('A = \n\n');
 disp(A);
-fprintf('B = \n\n');
-disp(B);
+fprintf('C = \n\n');
+disp(C);
 
 disp('******************************************************************')
-disp('Obtencion de matriz de controlabilidad')
+disp('Obtencion de transpuestas')
 fprintf('******************************************************************\n\n')
 
-Co = [];
+fprintf('At = \n\n');
+At = transpose(A);
+disp(At);
+
+fprintf('Ct = \n\n');
+Ct = transpose(C);
+disp(Ct);
+
+disp('******************************************************************')
+disp('Obtencion de matriz de observabilidad')
+fprintf('******************************************************************\n\n')
+
+Ob = [];
 
 for i=0: n - 1
-    fprintf('A^%i * B = \n', i);
-    disp(A^i * B);
+    fprintf('(A^t)^%i * C^t = \n', i);
+    disp(transpose(A)^i * Ct);
     
-    Co = [Co A^i * B];
+    Ob = [Ob transpose(A)^i * Ct];
 end
 
 clear i;
 
-fprintf('Co = \n\n');
-disp(Co);
+fprintf('Ob = \n\n');
+disp(Ob);
+    
 
-if size(B, 2) == 1 
+if size(C, 1) == 1 
     
     disp('******************************************************************')
-    disp('Determinante de matriz de controlabilidad')
+    disp('Determinante de matriz de Observabilidad')
     fprintf('******************************************************************\n\n')
 
-    disp(det(Co));
+    disp(det(Ob));
     
 else
     disp('******************************************************************')
     disp('Rango de matriz de controlabilidad')
     fprintf('******************************************************************\n\n')
     
-    disp(rank(Co));
+    disp(rank(Ob));
     
 end
     
-if length(A) - rank(Co) == 0
+if length(A) - rank(Ob) == 0
     disp('---------------------------------------------------------');
-    disp('El sistema es de estados completamente controlables');
+    disp('El sistema es de estados completamente observables');
     disp('---------------------------------------------------------');
 else
-    disp('Los vectores columna de la matriz de controlabilidad no son linealmente independientes');
+    disp('Los vectores columna de la matriz de observabilidad no son linealmente independientes');
     disp('---------------------------------------------------------');
-    disp('El sistema NO es de estados completamente controlables');
+    disp('El sistema NO es de estados completamente observables');
     disp('---------------------------------------------------------');
     
 end
