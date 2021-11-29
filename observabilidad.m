@@ -1,7 +1,7 @@
-%% controlabilidad.m
-% Dadas la matrices de estados A y B determina si es sistema es de estados
-% completamente controlables. Estas matrices pueden ser de una o multiples
-% entradas.
+%% observabilidad.m
+% Dadas la matrices de estados A y C determina si es sistema es de estados
+% completamente observables. Estas matrices pueden ser de una o multiples
+% salidas.
 
 clc
 clear
