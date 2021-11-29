@@ -57,6 +57,10 @@ clear i;
 
 fprintf('Co = \n\n');
 disp(Co);
+    
+
+
+controlable = false;
 
 if size(B, 2) == 1 
     

@@ -10,9 +10,9 @@ clear
 % Añadir en esta seccion los valores de las matrices A, B y C (se asume que
 % D = 0)
 
-A = [2 0 0; 0 2 0; 0 3 1];
+A = [1 0 -1; 3 2 4; 0 1 3];
 
-C = [1 0 0; 0 1 0];
+C = [1 0 1; 0 1 1];
 
 
 %% Inicio de script
@@ -28,8 +28,6 @@ if size(C, 2) ~= n
     disp('Tamanio incorrecto de matriz B');
     return
 end
-
-syms s;
 
 disp('******************************************************************')
 disp('Variables de entrada')
