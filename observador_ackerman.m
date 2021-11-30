@@ -1,11 +1,13 @@
 clc
-clear
+clear -except A B C
 
-A = [0 0 -12; 1 0 -19; 0 1 -8];
+A = [-1 1 0; 0 -2 1; 0 0 -3];
 
-B = [4000; 2200; 100];
+B = [0; 0; 1];
 
-polos = [complex(-3.8,6.28), complex(-3.8,-6.28) -38];
+C = [1 2 0];
+
+polos = [-6 -6 -6];
 
 %% Inicio de script
 
@@ -21,8 +23,6 @@ if size(B, 1) ~= n
     return
 end
 
-syms s;
-
 disp('******************************************************************')
 disp('Variables de entrada')
 fprintf('******************************************************************\n\n')
@@ -31,40 +31,56 @@ fprintf('A = \n\n');
 disp(A);
 fprintf('B = \n\n');
 disp(B);
+fprintf('C = \n\n');
+disp(C);
 
 disp('******************************************************************')
-disp('Obtencion de matriz de controlabilidad (o martiz M)')
+disp('Obtencion de transpuestas')
 fprintf('******************************************************************\n\n')
 
-M = [];
+fprintf('At = \n\n');
+At = transpose(A);
+disp(At);
+
+fprintf('Ct = \n\n');
+Ct = transpose(C);
+disp(Ct);
+
+disp('******************************************************************')
+disp('Obtencion de matriz de observabilidad (o martiz N)')
+fprintf('******************************************************************\n\n')
+
+N = [];
 
 for i=0: n - 1
-       
-    M = [M A^i * B];
+    fprintf('(A^t)^%i * C^t = \n', i);
+    disp(transpose(A)^i * Ct);
+    
+    N = [N transpose(A)^i * Ct];
 end
 
 clear i;
 
-fprintf('M = \n\n');
-disp(M);
-
-fprintf('M^-1 = \n\n');
-disp(inv(M));
-      
-if length(A) - rank(M) == 0
-    fprintf('El sistema es de estados completamente controlables\n\n');
+fprintf('N = \n\n');
+disp(N);
+    
+fprintf('Rango N = \n\n');
+disp(rank(N));
+    
+if length(A) - rank(N) == 0
+    disp('El sistema es de estados completamente observables');
 else
-    disp('Los vectores columna de la matriz de controlabilidad no son linealmente independientes');
     disp('---------------------------------------------------------');
-    disp('El sistema NO es de estados completamente controlables');
+    disp('El sistema NO es de estados completamente observables');
     disp('---------------------------------------------------------');
     return
-    
 end
 
 disp('******************************************************************')
 disp('Polos deseados')
 fprintf('******************************************************************\n\n')
+
+syms s;
 
 polos = s*ones(size(polos)) - polos;
 disp(polos)
@@ -97,14 +113,14 @@ disp(phi_A);
 
 
 disp('******************************************************************')
-disp('Calculo de matriz K')
+disp('Calculo de matriz Ke')
 fprintf('******************************************************************\n\n')
 
-aux = zeros(1, length(M));
-aux(length(M)) = 1;
+aux = zeros(length(N), 1);
+aux(length(N)) = 1;
 
-K = aux * inv(M) * phi_A;
-fprintf('K = \n\n');
-disp(K)
+Ke = phi_A * inv(transpose(N)) * aux;
+fprintf('Ke = \n\n');
+disp(Ke)
 
 

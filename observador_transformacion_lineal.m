@@ -1,11 +1,13 @@
 clc
 clear -except A B C
 
-A = [0 1 0; 0 0 1; -1 -5 -6];
+A = [0 20.6; 1 0];
 
-B = [0; 1; 1];
+B = [0; 1];
 
-polos = [complex(-2,4), complex(-2,-4) -10];
+C = [0 1];
+
+polos = [-10 -10];
 
 %% Inicio de script
 
@@ -21,8 +23,6 @@ if size(B, 1) ~= n
     return
 end
 
-syms s;
-
 disp('******************************************************************')
 disp('Variables de entrada')
 fprintf('******************************************************************\n\n')
@@ -31,44 +31,58 @@ fprintf('A = \n\n');
 disp(A);
 fprintf('B = \n\n');
 disp(B);
+fprintf('C = \n\n');
+disp(C);
 
 disp('******************************************************************')
-disp('Obtencion de matriz de controlabilidad (o martiz M)')
+disp('Obtencion de transpuestas')
 fprintf('******************************************************************\n\n')
 
-M = [];
+fprintf('At = \n\n');
+At = transpose(A);
+disp(At);
+
+fprintf('Ct = \n\n');
+Ct = transpose(C);
+disp(Ct);
+
+disp('******************************************************************')
+disp('Obtencion de matriz de observabilidad (o martiz N)')
+fprintf('******************************************************************\n\n')
+
+N = [];
 
 for i=0: n - 1
-       
-    M = [M A^i * B];
+    fprintf('(A^t)^%i * C^t = \n', i);
+    disp(transpose(A)^i * Ct);
+    
+    N = [N transpose(A)^i * Ct];
 end
 
 clear i;
 
-fprintf('M = \n\n');
-disp(M);
-
-fprintf('rango M = \n\n');
-disp(rank(M));
-      
-if length(A) - rank(M) == 0
-    fprintf('El sistema es de estados completamente controlables\n\n');
+fprintf('N = \n\n');
+disp(N);
+    
+fprintf('Rango N = \n\n');
+disp(rank(N));
+    
+if length(A) - rank(N) == 0
+    disp('El sistema es de estados completamente observables');
 else
-    disp('Los vectores columna de la matriz de controlabilidad no son linealmente independientes');
     disp('---------------------------------------------------------');
-    disp('El sistema NO es de estados completamente controlables');
+    disp('El sistema NO es de estados completamente observables');
     disp('---------------------------------------------------------');
     return
-    
 end
 
 disp('******************************************************************')
-disp('Obtencion de polinomio caracteristico de |sI - A|')
+disp('Obtencion de polinomio caracteristico de |sI - A^t|')
 fprintf('******************************************************************\n\n')
 
 syms s;
 
-sIA = s*eye(size(A)) - A;
+sIA = s*eye(size(A)) - transpose(A);
 disp(sIA);
 
 fprintf('|sI - A| = \n\n');
@@ -101,15 +115,12 @@ fprintf('W = \n\n');
 disp(W);
 
 disp('******************************************************************')
-disp('Matriz de transformacion T')
+disp('Matriz de transformacion Q')
 fprintf('******************************************************************\n\n')
 
-fprintf('T = M * W\n\n');
-T = M * W;
-disp(T);
-
-fprintf('T^-1 =\n\n');
-disp(inv(T));
+fprintf('Q = W * N^t\n\n');
+Q = inv(W * transpose(N));
+disp(Q);
 
 disp('******************************************************************')
 disp('Polos deseados')
@@ -145,16 +156,17 @@ for i=length(cofs_a):-1:2
     delta = [delta cofs_alfa(i) - cofs_a(i)];
 end
 
+delta = transpose(delta);
 fprintf('delta =\n\n');
 disp(delta);
 
 
 disp('******************************************************************')
-disp('Matriz de ganancias K  ->  K = delta * T^-1')
+disp('Matriz de ganancias Ke  ->  Ke = Q * delta')
 fprintf('******************************************************************\n\n')
 
-K = delta * inv(T);
-fprintf('K =\n\n');
-disp(K);
+Ke = Q * delta;
+fprintf('Ke =\n\n');
+disp(Ke);
 
 
